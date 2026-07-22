@@ -6,7 +6,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                //git 'https://github.com/Shafin-Thiyam/jenking-war-web-project.git'
                 git url:  'https://github.com/Shafin-Thiyam/sthiyatrend.git', branch: 'main'
             }
         }
@@ -16,15 +15,15 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
-stage('SonarQube analysis') {
-environment{
-scannerHome = tool 'sthiya-sonar-qube-scanner'
-}
-            steps {
-
-   withSonarQubeEnv('sthiya-sonar-qube-server'){
-sh "${scannerHome}/bin/sonar-scanner"
-}
+    stage('SonarQube analysis') {
+        environment{
+            scannerHome = tool 'sthiya-sonar-qube-scanner'
+        }
+        steps {
+           withSonarQubeEnv('sthiya-sonar-qube-server'){
+            sh "${scannerHome}/bin/sonar-scanner"
+           }
 }
     }
+}
 }
