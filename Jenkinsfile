@@ -36,27 +36,31 @@ pipeline {
                 }
             }
         }
-	stage('Jar Publish') {
-           steps {
-             echo "===========Jfrog started========" 
-             def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact-cred"
-             def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}" 
-             def uploadspec ="""{
-                 "files":[
-                         "pattern" : "jarstaging/(*)",
-                         "target" : "sthiya-libs-release-local/{1}",
-                         "flat" : "false",
-                         "props" : "${properties}",
-                         "exclusions" : ["*.sha1","*.md5"]
-                  ]
-             }"""
-             def buildInfo = server.upload(uploadspec)
-            buildInfo.env.collect()
-            server.publishBuildInfo(buildInfo)
-            echo "==========Jfrog ended==============="
 
-           }    
-	 }
+	stage("Jar Publish") {
+            steps {
+                script {
+                    echo '<--------------- Jar Publish Started --------------->'
+                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact-cred"
+                    def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
+                    def uploadSpec = """{
+                          "files": [
+                            {
+                              "pattern": "jarstaging/(*)",
+							  "target" : "sthiya-libs-release-local/{1}",
+                              "flat": "false",
+                              "props": "${properties}",
+                              "exclusions": [ "*.sha1", "*.md5"]
+                            }
+                         ]
+                     }"""
+                    def buildInfo = server.upload(uploadSpec)
+                    buildInfo.env.collect()
+                    server.publishBuildInfo(buildInfo)
+                    echo '<--------------- Jar Publish Ended --------------->'
+                }
+            }
         }
+	}
         
 }
