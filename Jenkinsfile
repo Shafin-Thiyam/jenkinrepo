@@ -7,7 +7,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 //git 'https://github.com/Shafin-Thiyam/jenking-war-web-project.git'
-                git url:  'https://github.com/Shafin-Thiyam/jenking-war-web-project.git', branch: 'main'
+                git url:  'https://github.com/Shafin-Thiyam/sthiyatrend.git', branch: 'main'
             }
         }
 
