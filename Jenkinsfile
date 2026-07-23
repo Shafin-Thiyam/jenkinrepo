@@ -16,5 +16,18 @@ pipeline {
                 sh 'mvn clean package'
             }
         }
+
+        stage('SonarQube analysis') {
+            environment{
+                scannerHOME = tool 'sthiya-sonar-qube-scanner'
+            }
+            steps {
+                withSonarQubeEnv('sthiya-sonar-qube-server'){
+                sh "${scannerHOME}/bin/sonar-scanner"
+                }
+            }
+        }
+        
+        
     }
 }
