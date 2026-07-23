@@ -1,3 +1,4 @@
+def registry = "https://trial6dwnfg.jfrog.io/"
 pipeline {
     agent any
     environment {
@@ -34,6 +35,28 @@ pipeline {
                 sh "${scannerHOME}/bin/sonar-scanner"
                 }
             }
+        }
+	stage('Jar Publish') {
+           steps {
+             echo "===========Jfrog started========" 
+             def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact-cred"
+             def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}" 
+             def uploadspec ="""{
+                 "files":[
+                         "pattern" : "jarstaging/(*)",
+                         "target" : "sthiya-libs-release-local/{1}",
+                         "flat" : "false",
+                         "props" : "${properties}",
+                         "exclusions" : ["*.sha1","*.md5"]
+                  ]
+             }"""
+             def buildInfo = server.upload(uploadspec)
+            buildInfo.env.collect()
+            server.publishBuildInfo(buildInfo)
+            echo "==========Jfrog ended==============="
+
+           }    
+	 }
         }
         
         
